@@ -321,7 +321,8 @@ final class CallAudioManager extends CallsManagerListenerBase
             }
         } else {
             // Device just undocked, remove from speakerphone if possible.
-            if (mCallAudioState.getRoute() == CallAudioState.ROUTE_SPEAKER) {
+            if (mCallAudioState.getRoute() == CallAudioState.ROUTE_SPEAKER
+                    && !mCallsManager.hasVideoCall()) {
                 setAudioRoute(CallAudioState.ROUTE_WIRED_OR_EARPIECE);
             }
         }
