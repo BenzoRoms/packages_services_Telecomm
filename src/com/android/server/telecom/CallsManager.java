@@ -748,7 +748,7 @@ public class CallsManager extends Call.ListenerBase implements VideoProviderProx
                 R.bool.use_speaker_when_docked);
 
         call.setStartWithSpeakerphoneOn(speakerphoneOn
-                || (useSpeakerWhenDocked && mDockManager.isDocked()));
+                || (useSpeakerWhenDocked && isSpeakerEnabledForDocked()));
 
         if (call.isEmergencyCall()) {
             // Emergency -- CreateConnectionProcessor will choose accounts automatically
@@ -855,10 +855,22 @@ public class CallsManager extends Call.ListenerBase implements VideoProviderProx
             if (VideoProfile.isVideo(videoState) &&
                 !mWiredHeadsetManager.isPluggedIn() &&
                 !mCallAudioManager.isBluetoothDeviceAvailable() &&
-                isSpeakerEnabledForVideoCalls()) {
+                isSpeakerEnabledForVideoCalls() || isSpeakerEnabledForDocked()) {
                 call.setStartWithSpeakerphoneOn(true);
             }
         }
+    }
+
+    /**
+     * Determines if the speakerphone should be automatically enabled for the call.  Speakerphone
+     * should be enabled if car/desk dock plugged and bluetooth or the wired headset are not in use.
+     *
+     * @return {@code true} if the speakerphone should be enabled.
+     */
+    private boolean isSpeakerEnabledForDocked() {
+        return mDockManager.isDocked() &&
+            !mWiredHeadsetManager.isPluggedIn() &&
+            !mCallAudioManager.isBluetoothDeviceAvailable();
     }
 
     private static boolean isSpeakerEnabledForVideoCalls() {
